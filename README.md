@@ -1,7 +1,4 @@
-Here is the content of those screenshots converted into a clean, standard Markdown `README.md` format.
-
 ---
-
 # Python Terminal Snake Game
 
 A classic **Snake game** built in Python that runs directly in the terminal using the `curses` library.
