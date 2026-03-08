@@ -20,6 +20,8 @@ import curses
 import random
 import time 
 
+
+High_score = 0 
 help_text = [
             "HELP - SNAKE GAME",
             "-------------------",
@@ -40,6 +42,7 @@ help_text = [
 
 
 class SnakeGame:
+
     def __init__(self, stdscr):
         self.stdscr = stdscr
         self.sh, self.sw = stdscr.getmaxyx()
@@ -61,11 +64,12 @@ class SnakeGame:
         
         # First food
         self.food = [self.sh // 2, self.sw // 2]
-        self.w.addch(int(self.food[0]), int(self.food[1]), curses.ACS_PI)
+        self.w.addch(int(self.food[0]), int(self.food[1]), curses.ACS_DIAMOND)
         
         # Initial direction (moving right)
         self.key = curses.KEY_RIGHT
         self.score = 0
+       
         
 
 
@@ -81,7 +85,7 @@ class SnakeGame:
             food = new_food if new_food not in self.snake else None
         
         self.food = food
-        self.w.addch(self.food[0], self.food[1], curses.ACS_PI)
+        self.w.addch(self.food[0], self.food[1], curses.ACS_DIAMOND)
 
 
 
@@ -104,7 +108,7 @@ class SnakeGame:
 
         self.w.timeout(100) # restore game speed
         self.w.clear()  # Clear help screen and return to game
-        self.w.addch(self.food[0], self.food[1], curses.ACS_PI) # Redraw food after clearing screen
+        self.w.addch(self.food[0], self.food[1], curses.ACS_DIAMOND) # Redraw food after clearing screen
         for segment in self.snake:
             self.w.addch(int(segment[0]), int(segment[1]), curses.ACS_CKBOARD)
     
@@ -116,7 +120,14 @@ class SnakeGame:
         """Update score display"""
         score_text = f"Score: {self.score}"
         self.w.addstr(0, 2, score_text)
-    
+
+
+
+    def get_high_score(self):
+        global High_score
+        if self.score > High_score:
+            High_score = self.score
+        return High_score
 
 
 
@@ -127,14 +138,17 @@ class SnakeGame:
         self.w.clear()
         h, w = self.stdscr.getmaxyx()
         
-        game_over_text = "GAME OVER!"
-        final_score_text = f"Final Score: {self.score}"
-        restart_text = "Press 'r' to restart or 'q' to quit"
+        game_over_msg = "GAME OVER!"
+        final_score_msg = f"Final Score: {self.score}"
+        restart_msg = "Press 'r' to restart or 'q' to quit"
+        high_score_msg = f"High score: {self.get_high_score()}"
         
-        # Center the text
-        self.w.addstr(h//2 - 2, w//2 - len(game_over_text)//2, game_over_text)
-        self.w.addstr(h//2, w//2 - len(final_score_text)//2, final_score_text)
-        self.w.addstr(h//2 + 2, w//2 - len(restart_text)//2, restart_text)
+    
+        # Center the texts 
+        self.w.addstr(h//2 - 2, w//2 - len(game_over_msg)//2, game_over_msg)
+        self.w.addstr(h//2, w//2 - len(final_score_msg)//2, final_score_msg)
+        self.w.addstr(h//2 + 2, w//2 - len(restart_msg)//2, restart_msg)
+        self.w .addstr(h//2 + 4, w//2 - len(high_score_msg)// 2, high_score_msg)
         
         self.w.refresh()
         
@@ -150,8 +164,6 @@ class SnakeGame:
 
 
 
-
-
     def run(self):
         """Main game loop"""
         while True:
@@ -160,20 +172,31 @@ class SnakeGame:
             
             # Update score
             self.update_score()
-            
+
+    
             # Get next key
             next_key = self.w.getch()
             
 
             if next_key in [ord('h'), ord('H'), ord('p'), ord('P')]:
                 self.help_screen()
+
                 continue
 
+
+
+#---------------------------------GAME LOGIC------------------
             # Set key if valid input received
             if next_key in [curses.KEY_DOWN, curses.KEY_UP, curses.KEY_LEFT, curses.KEY_RIGHT,
                            ord('s'), ord('w'), ord('a'), ord('d')]:
                 self.key = next_key
             
+#----------------------------to prevent the snake from reversing direction 9to be refactored to stop 180 suicide error----------------------
+
+
+
+
+
             # Quit game
             if next_key == ord('q'):
                 self.game_over()
@@ -223,6 +246,7 @@ class SnakeGame:
             self.w.refresh()
 
 
+
 def loading_screen(stdscr):
     """Display loading screen with animation"""
     h, w = stdscr.getmaxyx()
@@ -237,6 +261,10 @@ def loading_screen(stdscr):
         stdscr.addstr(h//2 + 2, w//2 - 2 - (bar_width//2), f"[{bar}] {int(progress*100)}%")
         stdscr.refresh()
         time.sleep(0.1) # Simulate loading speed
+
+
+
+
 
 def main(stdscr):
     curses.curs_set(0)
