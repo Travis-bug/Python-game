@@ -1,0 +1,22 @@
+Errors & Fixes Log
+==================
+
+1. curses addstr() out-of-bounds error (snake_game.py, main() instructions screen)
+   - Error: _curses.error: addstr() returned ERR
+   - Cause: stdscr.addstr() was called without checking if the text position
+     or length exceeded the terminal dimensions.
+   - Fix: Added bounds checking (0 <= y < h, 0 <= x < w) and line truncation
+     (line[:w - x]) before each addstr() call.
+
+2. help_screen() not waiting for user input (snake_game.py, help_screen())
+   - Error: Help screen would flash and immediately disappear.
+   - Cause: timeout was set to -1 (blocking) but no getch() call was made to
+     actually wait for input before clearing the screen.
+   - Fix: Added self.w.getch() after curses.flushinp() so the help screen
+     stays visible until the user presses a key.
+
+3. Snake body not redrawn after help screen (snake_game.py, help_screen())
+   - Error: Snake body disappeared after closing the help screen.
+   - Cause: self.w.clear() erased everything, but only food was redrawn.
+   - Fix: Added a loop to redraw all snake segments after clearing the help
+     screen.
