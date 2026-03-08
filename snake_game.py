@@ -20,6 +20,25 @@ import curses
 import random
 import time 
 
+help_text = [
+            "HELP - SNAKE GAME",
+            "-------------------",
+            "CONTROLS:",
+            "", 
+            "Arrow keys/ WASD : Move",
+            "Press 'q or Q'   :  quit",
+            "press 'h or H'   :  help",
+            "---------------------------",
+            "INSTRUCTIONS:",
+            "",
+            "Eat the food (π) to grow and score points!",
+            "The more you eat, the longer you grow!",
+            "Don't hit the walls or yourself!",
+            "",
+            "Press any key to return to the game..."
+        ]
+
+
 class SnakeGame:
     def __init__(self, stdscr):
         self.stdscr = stdscr
@@ -71,24 +90,6 @@ class SnakeGame:
     
         h, w = self.stdscr.getmaxyx() #
         self.w.timeout(-1) # Wait indefinitely for user input
-
-        help_text = [
-            "HELP - SNAKE GAME",
-            "-------------------",
-            "CONTROLS:",
-            "", 
-            "Arrow keys/ WASD : Move",
-            "Press 'q or Q'   :  quit",
-            "press 'h or H'   :  help",
-            "---------------------------",
-            "INSTRUCTIONS:",
-            "",
-            "Eat the food (π) to grow and score points!",
-            "The more you eat, the longer you grow!",
-            "Don't hit the walls or yourself!",
-            "",
-            "Press any key to return to the game..."
-        ]
         
         for i, line in enumerate(help_text):
             y = h//2 - len(help_text)//2 + i
@@ -243,24 +244,8 @@ def main(stdscr):
     loading_screen(stdscr)
    
 
-
-
     # Show instructions
-    h, w = stdscr.getmaxyx()
-    Player_Manual = [
-        "PYTHON SNAKE GAME",
-        "",
-        "Controls:",
-        "Use the arrow keys or WASD to move",
-        " Press'q' to quit",
-        "",
-        "Eat the food (π) to grow and score points!",
-        "Don't hit the walls or yourself!",
-        "",
-        "Press any key to start..."
-    ]
-
-
+    
    # {i plan to add a feature where the user can press 'h' for help during the game, 
    # this featire pauses the game and resumes it after the   
    # user is done with reading, but for now this is just a placeholde} =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> completed 
@@ -272,10 +257,10 @@ def main(stdscr):
    # but for now this is just a placeholder P.S you can make these features if you want,
    # just fork the repo and make your changes and open a pull request, i will review your changes before merging. THANKS :D
    
-    
+    h, w = stdscr.getmaxyx()
     stdscr.clear()
-    for i, line in enumerate(Player_Manual):
-        y = h//2 - len(Player_Manual)//2 + i
+    for i, line in enumerate(help_text):
+        y = h//2 - len(help_text)//2 + i
         x = w//2 - len(line)//2
         if 0 <= y < h and 0 <= x < w:
             stdscr.addstr(y, x, line[:w - x])
