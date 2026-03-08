@@ -26,6 +26,7 @@ The game recreates the traditional Snake gameplay with keyboard controls, score 
 | **Arrow Keys / WASD** | Move the snake |
 | **Q** | Quit the game |
 | **R** | Restart after game over |
+| **H/P** | pause game for help screen | 
 
 ---
 
