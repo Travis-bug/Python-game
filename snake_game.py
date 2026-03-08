@@ -100,11 +100,13 @@ class SnakeGame:
              self.w.addstr(y, x, line[:w - x])
         self.w.refresh()
         curses.flushinp()   # clear leftover input
-
+        self.w.getch()      # wait for user to press a key
 
         self.w.timeout(100) # restore game speed
         self.w.clear()  # Clear help screen and return to game
         self.w.addch(self.food[0], self.food[1], curses.ACS_PI) # Redraw food after clearing screen
+        for segment in self.snake:
+            self.w.addch(int(segment[0]), int(segment[1]), curses.ACS_CKBOARD)
     
 
 
