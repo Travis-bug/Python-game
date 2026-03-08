@@ -18,8 +18,7 @@ Features:
 
 import curses
 import random
-import time
-
+import time 
 
 class SnakeGame:
     def __init__(self, stdscr):
@@ -27,7 +26,8 @@ class SnakeGame:
         self.sh, self.sw = stdscr.getmaxyx()
         self.w = curses.newwin(self.sh, self.sw, 0, 0)
         self.w.keypad(1)
-        self.w.timeout(100)
+        self.w.timeout(100)  # Refresh every 100ms
+        
         
         # Initialize snake in the middle of screen
         self.snake_x = self.sw // 4
@@ -48,24 +48,77 @@ class SnakeGame:
         self.key = curses.KEY_RIGHT
         self.score = 0
         
+
+
+
     def create_food(self):
         """Create new food at random location"""
         food = None
         while food is None:
-            nf = [
+            new_food = [
                 random.randint(1, self.sh - 2),
                 random.randint(1, self.sw - 2)
             ]
-            food = nf if nf not in self.snake else None
+            food = new_food if new_food not in self.snake else None
         
         self.food = food
         self.w.addch(self.food[0], self.food[1], curses.ACS_PI)
+
+
+
+    def help_screen(self): 
+        """Display help screen and wait for user input to return to game"""
     
+        h, w = self.stdscr.getmaxyx() #
+        self.w.timeout(-1) # Wait indefinitely for user input
+
+        help_text = [
+            "HELP - SNAKE GAME",
+            "-------------------",
+            "CONTROLS:",
+            "", 
+            "Arrow keys/ WASD : Move",
+            "Press 'q or Q'   :  quit",
+            "press 'h or H'   :  help",
+            "---------------------------",
+            "INSTRUCTIONS:",
+            "",
+            "Eat the food (π) to grow and score points!",
+            "The more you eat, the longer you grow!",
+            "Don't hit the walls or yourself!",
+            "",
+            "Press any key to return to the game..."
+        ]
+        
+        for i, line in enumerate(help_text):
+            y = h//2 - len(help_text)//2 + i
+            x = w//2 - len(line)//2
+
+            if 0 <= y < h and 0 <= x < w:
+             
+             self.w.addstr(y, x, line[:w - x])
+        self.w.refresh()
+        curses.flushinp()   # clear leftover input
+
+
+        self.w.timeout(100) # restore game speed
+        self.w.clear()  # Clear help screen and return to game
+        self.w.addch(self.food[0], self.food[1], curses.ACS_PI) # Redraw food after clearing screen
+    
+
+
+
+
     def update_score(self):
         """Update score display"""
         score_text = f"Score: {self.score}"
         self.w.addstr(0, 2, score_text)
     
+
+
+
+
+
     def game_over(self):
         """Display game over console and wait for user inout to restart or wuit"""
         self.w.clear()
@@ -85,11 +138,17 @@ class SnakeGame:
         # Wait for user input
         while True:
             key = self.w.getch()
-            if key == ord('q'):
+            if key == ord ('q') or key == ord ('Q'):
                 return False
-            elif key == ord('r'):
+            elif key == ord ('r') or key == ord ('R'):
                 return True
     
+
+
+
+
+
+
     def run(self):
         """Main game loop"""
         while True:
@@ -102,14 +161,22 @@ class SnakeGame:
             # Get next key
             next_key = self.w.getch()
             
+
+            if next_key in [ord('h'), ord('H'), ord('p'), ord('P')]:
+                self.help_screen()
+                continue
+
             # Set key if valid input received
             if next_key in [curses.KEY_DOWN, curses.KEY_UP, curses.KEY_LEFT, curses.KEY_RIGHT,
                            ord('s'), ord('w'), ord('a'), ord('d')]:
                 self.key = next_key
             
             # Quit game
-            if self.key == ord('q'):
+            if next_key == ord('q'):
+                self.game_over()
                 break
+
+    
             
             # Calculate new head position based on curredt dir
             new_head = [self.snake[0][0], self.snake[0][1]]
@@ -152,16 +219,32 @@ class SnakeGame:
             
             self.w.refresh()
 
+
+def loading_screen(stdscr):
+    """Display loading screen with animation"""
+    h, w = stdscr.getmaxyx()
+    loading_text = "LOADING PYTHON..."
+    bar_width = 30
+
+    for i in range(bar_width + 1):
+        stdscr.clear()
+        progress = (i / bar_width)
+        bar = "█" * i + "-" * (bar_width - i)
+        stdscr.addstr(h//2, w//2 - len(loading_text)//2, loading_text)
+        stdscr.addstr(h//2 + 2, w//2 - 2 - (bar_width//2), f"[{bar}] {int(progress*100)}%")
+        stdscr.refresh()
+        time.sleep(0.1) # Simulate loading speed
+
 def main(stdscr):
-    """Main function to initialize curses and start game plau"""
-    # Configure curses
-    curses.curs_set(0)  # Hide cursor
-    stdscr.nodelay(1)   # Non-blocking input
-    stdscr.timeout(100) # Refresh rate
+    curses.curs_set(0)
     
-    # Start game
-    game = SnakeGame(stdscr)
     
+    # 1. Show Loading Screen
+    loading_screen(stdscr)
+   
+
+
+
     # Show instructions
     h, w = stdscr.getmaxyx()
     Player_Manual = [
@@ -177,16 +260,17 @@ def main(stdscr):
         "Press any key to start..."
     ]
 
-   # user_input = stdscr.getch() 
-   # if user_input:   {i plan to add a feature where the user can press 'h' for help during the game, 
-   # this featire pauses the game and resumes it after the 
-   # use is done with reading, but for now this is just a placeholder }
 
-   #i also plan to add a loading screen where the user reads the instructions 
-   # while the game is loading, with some cool animations, 
+   # {i plan to add a feature where the user can press 'h' for help during the game, 
+   # this featire pauses the game and resumes it after the   
+   # user is done with reading, but for now this is just a placeholde} =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> completed 
+
+   # {i also plan to add a loading screen where the user reads the instructions 
+   # while the game is loading, with some cool animations} =>>>>>>>>>>>>>>>>> completed 
+
    # feel free to suggest some ideas for the loading screen,
    # but for now this is just a placeholder P.S you can make these features if you want,
-   #  just fork the repo and make your changes and open a pull request, i will review your changes before merging. THANKS :D
+   # just fork the repo and make your changes and open a pull request, i will review your changes before merging. THANKS :D
    
     
     stdscr.clear()
@@ -198,6 +282,9 @@ def main(stdscr):
     stdscr.refresh()
     stdscr.getch()
     
+
+    # Start game
+    game = SnakeGame(stdscr)
     # Run the game
     game.run()
 
