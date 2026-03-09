@@ -17,11 +17,20 @@ Features:
 """
 
 import curses
+from os import write
 import random
 import time 
 
+def get_high_score():
+    """Read the high score from file or return 0 if the HS file doesn't exist"""
+    try:
+        with open("high_score.txt", "r") as f:
+            return int(f.read().strip())
+    except FileNotFoundError:
+        return 0
 
-High_score = 0 
+High_score = get_high_score()
+
 help_text = [
             "HELP - SNAKE GAME",
             "-------------------",
@@ -127,8 +136,10 @@ class SnakeGame:
         global High_score
         if self.score > High_score:
             High_score = self.score
+            with open("high_score.txt", "w") as f:
+             f.write(str(High_score))
         return High_score
-
+     
 
 
 
