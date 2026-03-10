@@ -17,16 +17,16 @@ Features:
 """
 
 import curses
-from os import write
+import pickle
 import random
 import time 
 
 def get_high_score():
     """Read the high score from file or return 0 if the HS file doesn't exist"""
     try:
-        with open("high_score.txt", "r") as f:
-            return int(f.read().strip())
-    except FileNotFoundError:
+        with open("game_cache.dat", "rb") as f:
+            return pickle.load(f)
+    except (FileNotFoundError, EOFError):
         return 0
 
 High_score = get_high_score()
@@ -91,9 +91,9 @@ class SnakeGame:
                 random.randint(1, self.sh - 2),
                 random.randint(1, self.sw - 2)
             ]
-            food = new_food if new_food not in self.snake else None
+            food = new_food if new_food not in self.snake else None #
         
-        self.food = food
+        self.food = food 
         self.w.addch(self.food[0], self.food[1], curses.ACS_DIAMOND)
 
 
@@ -136,8 +136,8 @@ class SnakeGame:
         global High_score
         if self.score > High_score:
             High_score = self.score
-            with open("high_score.txt", "w") as f:
-             f.write(str(High_score))
+            with open("game_cache.dat", "wb") as f:
+             pickle.dump(High_score, f)
         return High_score
      
 
