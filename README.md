@@ -80,6 +80,11 @@ python3 snake_game.py
 * Hitting a wall or the snake's own body ends the game.
 
 ---
+## Game Play 
+
+https://github.com/user-attachments/assets/60c4c88f-eb97-428e-9a9f-ae2053098374
+
+___
 
 ## Project Structure
 
