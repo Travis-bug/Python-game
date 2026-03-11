@@ -19,7 +19,11 @@ Features:
 import curses
 import pickle
 import random
-import time 
+import time
+from Background_sound import BackgroundSound 
+
+
+bg = BackgroundSound()
 
 def get_high_score():
     """Read the high score from file or return 0 if the HS file doesn't exist"""
@@ -99,6 +103,9 @@ class SnakeGame:
 
 
     def help_screen(self): 
+
+        bg.change_state("game_pause") # Start pause music
+
         """Display help screen and wait for user input to return to game"""
     
         h, w = self.stdscr.getmaxyx() #
@@ -117,6 +124,7 @@ class SnakeGame:
 
         self.w.timeout(100) # restore game speed
         self.w.clear()  # Clear help screen and return to game
+        bg.change_state("Game_Play")
         self.w.addch(self.food[0], self.food[1], curses.ACS_DIAMOND) # Redraw food after clearing screen
         for segment in self.snake:
             self.w.addch(int(segment[0]), int(segment[1]), curses.ACS_CKBOARD)
@@ -126,7 +134,7 @@ class SnakeGame:
 
 
     def update_score(self):
-        """Update score display"""
+        """Update score display"""  
         score_text = f"Score: {self.score}"
         self.w.addstr(0, 2, score_text)
 
@@ -145,7 +153,10 @@ class SnakeGame:
 
 
     def game_over(self):
-        """Display game over console and wait for user inout to restart or wuit"""
+
+        bg.change_state("Game_Over") # Start game over music
+
+        """Display game over console and wait for user inout to restart or quit"""
         self.w.clear()
         h, w = self.stdscr.getmaxyx()
         
@@ -169,6 +180,7 @@ class SnakeGame:
             if key == ord ('q') or key == ord ('Q'):
                 return False
             elif key == ord ('r') or key == ord ('R'):
+                bg.change_state("Game_Play")
                 return True
     
 
@@ -177,8 +189,12 @@ class SnakeGame:
 
     def run(self):
         """Main game loop"""
+
+        bg.change_state("Game_Play") # Start game play music
+        
         while True:
             # Draw border
+
             self.w.border()
             
             # Update score
@@ -203,9 +219,6 @@ class SnakeGame:
                 self.key = next_key
             
 #----------------------------to prevent the snake from reversing direction 9to be refactored to stop 180 suicide error----------------------
-
-
-
 
 
             # Quit game
@@ -259,8 +272,12 @@ class SnakeGame:
 
 
 def loading_screen(stdscr):
+
+    bg.change_state("Loading_screen") # Start loading music
+
     """Display loading screen with animation"""
     h, w = stdscr.getmaxyx()
+
     loading_text = "LOADING PYTHON..."
     bar_width = 30
 
@@ -276,8 +293,10 @@ def loading_screen(stdscr):
 
 
 
-
 def main(stdscr):
+
+    global bg 
+    bg = BackgroundSound() # Initialize background sound manager
     curses.curs_set(0)
     
     
@@ -293,6 +312,9 @@ def main(stdscr):
 
    # {i also plan to add a loading screen where the user reads the instructions 
    # while the game is loading, with some cool animations} =>>>>>>>>>>>>>>>>> completed 
+
+   # {i plan to add Theme Music and sound effects for different game states 
+   # (loading, playing, game over, pause) using pygame mixer.} >>>>>>>>>>>>>>> completed 
 
    # feel free to suggest some ideas for the loading screen,
    # but for now this is just a placeholder P.S you can make these features if you want,
