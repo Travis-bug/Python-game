@@ -1,17 +1,28 @@
 import pygame
 import os
+import sys
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 
 class BackgroundSound:
     def __init__(self):
         pygame.mixer.init() # Initialize the mixer module
+
         self.music_files=  { 
             
-            "Loading_screen": "assets/sounds/background_music.WAV", # 
-
-            
-            "Game_Play": "assets/sounds/game_music.WAV",
-            "Game_Over": "assets/sounds/game_over_music.WAV",
-            "game_pause": "assets/sounds/pause_music.WAV"
+            "Loading_screen": resource_path("assets/sounds/background_music.WAV"), # 
+            "Game_Play": resource_path("assets/sounds/game_music.WAV"),
+            "Game_Over": resource_path("assets/sounds/game_over_music.WAV"),
+            "game_pause": resource_path("assets/sounds/pause_music.WAV")
         }
 
         self.present_state = None # Initialize with no state
